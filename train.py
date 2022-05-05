@@ -3,8 +3,8 @@ from os.path import join
 import argparse
 import sys
 
-from torch import sigmoid, nn
 from torch.optim.lr_scheduler import CosineAnnealingLR
+from torch import sigmoid, nn
 from torch.utils.data import DataLoader
 import torch
 import torch.optim as optim
@@ -54,14 +54,14 @@ parser.add_argument('--resume_model',
                     default=None,
                     help='path to load previously saved model')
 args = parser.parse_args(argv)
+net = UNet3D(1, 1, use_bias=True, inplanes=32)
+if args.resume_model is not None:
+    transfer_weights(net, args.resume_model)
+bce_crit = nn.BCELoss()
 print(args)
 
 is_cuda = torch.cuda.is_available()
 
-net = UNet3D(1, 1, use_bias=True, inplanes=16)
-if args.resume_model is not None:
-    transfer_weights(net, args.resume_model)
-bce_crit = nn.BCELoss()
 dice_crit = DiceLoss()
 last_bce_loss = 0
 last_dice_loss = 0
