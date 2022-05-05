@@ -126,7 +126,7 @@ class UNet3D(nn.Module):
         self.inplanes = inplanes
         self.num_groups = num_groups
         planes = [inplanes * int(pow(2, i)) for i in range(0, 5)] # int()= integer, pow()=power, a list is created: [32,64,128,256,512,1024]         
-        super(R2AttU_Net,self).__init__()
+        super(UNet3D,self).__init__()
         
         self.Maxpool = nn.MaxPool3d(kernel_size=2,stride=2)
         self.Upsample = nn.Upsample(scale_factor=2)
