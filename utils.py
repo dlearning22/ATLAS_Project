@@ -43,7 +43,7 @@ def generate_ex_list(directory):
         label_list = list()
         for file in files:
             if not file.startswith('.') and file.endswith('.nii.gz'):
-                if ("Lesion" in file):
+                if ("lesion" in file):
                     label_list.append(join(dirpath, file))
                 elif ("mask" not in file):
                     inputs.append(join(dirpath, file))
