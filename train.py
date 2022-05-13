@@ -54,7 +54,7 @@ parser.add_argument('--resume_model',
                     default=None,
                     help='path to load previously saved model')
 args = parser.parse_args(argv)
-net = UNet3D(1, 1, use_bias=True, inplanes=32)
+net = UNet3D(1, 1, use_bias=True, inplanes=8)
 if args.resume_model is not None:
     transfer_weights(net, args.resume_model)
 bce_crit = nn.BCELoss()
