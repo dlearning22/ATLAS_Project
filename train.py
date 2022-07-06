@@ -77,9 +77,10 @@ def criterion(pred, labels, weights=[0.1, 0.9]):
     last_dice_loss = _dice_loss.item()
     return weights[0] * _bce_loss + weights[1] * _dice_loss
   
- 
+focal_crit= FocalTverskyLoss()
+last_focal_loss=0
 def focal_loss(pred, labels):
-    l = FocalTverskyLoss(pred, labels)
+    l = focal_crit(pred, labels)
     global last_focal_loss
     last_focal_loss = l.item()
     return l
