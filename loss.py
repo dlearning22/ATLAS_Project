@@ -26,7 +26,7 @@ class DiceLoss(nn.Module):
 class FocalTverskyLoss(nn.Module):
     def __init__(self, weight=None, size_average=True):
         super(FocalTverskyLoss, self).__init__()
-                self.smooth = sys.float_info.epsilon
+        self.smooth = sys.float_info.epsilon
         self.squared_denom = squared_denom
         ALPHA = 0.5
         BETA = 0.5
