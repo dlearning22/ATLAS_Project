@@ -26,7 +26,9 @@ class DiceLoss(nn.Module):
 class FocalTverskyLoss(nn.Module,ALPHA,BETA,GAMMA):
     def __init__(self, weight=None, size_average=True):
         super(FocalTverskyLoss, self).__init__()
-
+        ALPHA = 0.5
+        BETA = 0.5
+        GAMMA = 1
     def forward(self, inputs, targets, smooth=1, alpha=ALPHA, beta=BETA, gamma=GAMMA):
         
         #comment out if your model contains a sigmoid or equivalent activation layer
