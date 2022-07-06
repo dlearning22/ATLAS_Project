@@ -29,7 +29,7 @@ class FocalTverskyLoss(nn.Module):
         ALPHA = 0.5
         BETA = 0.5
         GAMMA = 1
-    def forward(self, inputs, targets, smooth=1)
+    def forward(self, inputs, targets, smooth=1):
                 #, alpha=ALPHA, beta=BETA, gamma=GAMMA):
         
         #comment out if your model contains a sigmoid or equivalent activation layer
