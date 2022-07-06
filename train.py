@@ -77,8 +77,8 @@ def criterion(pred, labels, weights=[0.1, 0.9]):
     last_dice_loss = _dice_loss.item()
     return weights[0] * _bce_loss + weights[1] * _dice_loss
   
-def focal_loss (pred, labels):
-    l=FocalTverskyLoss(pred, labels)
+def focal_loss (pred, labels, A,B,G):
+    l=FocalTverskyLoss(pred, labels,A,B,G)
     return l
   
   
@@ -153,7 +153,7 @@ def train(train_loader, epoch):
         epoch_bce_loss += last_bce_loss
         epoch_dice_loss += last_dice_loss
         epoch_loss += weighted_loss.item()
-        BP_loss= focal_loss(outputs, labels)
+        BP_loss= focal_loss(outputs, labels,1,0.5,0.5)
         loss.backward()
         optimizer.step()
         scheduler.step()
