@@ -23,7 +23,7 @@ class DiceLoss(nn.Module):
         return 1 - dice_index
 
 
-class FocalTverskyLoss(nn.Module,ALPHA,BETA,GAMMA):
+class FocalTverskyLoss(nn.Module):
     def __init__(self, weight=None, size_average=True):
         super(FocalTverskyLoss, self).__init__()
         ALPHA = 0.5
