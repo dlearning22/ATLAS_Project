@@ -10,7 +10,7 @@ import torch
 import torch.optim as optim
 
 from dataset import MRIDataset
-from loss import DiceLoss
+from loss import DiceLoss,FocalTverskyLoss
 from model import UNet3D
 from utils import (get_weight_vector, Report,
                    transfer_weights)
@@ -68,7 +68,20 @@ is_cuda = torch.cuda.is_available()
 dice_crit = DiceLoss()
 last_bce_loss = 0
 last_dice_loss = 0
-
+ 
+def criterion(pred, labels, weights=[0.1, 0.9]):
+    _bce_loss = bce_crit(pred, labels)
+    _dice_loss = dice_crit(pred, labels)
+    global last_bce_loss, last_dice_loss
+    last_bce_loss = _bce_loss.item()
+    last_dice_loss = _dice_loss.item()
+    return weights[0] * _bce_loss + weights[1] * _dice_loss
+  
+def focal_loss (pred, labels):
+    l=FocalTverskyLoss(pred, labels)
+    return l
+  
+  
 #to save the metrics to excel
 wb = Workbook()
 train_sheet = wb.add_sheet('model metrics_training')
@@ -86,15 +99,6 @@ def save_to_excel (sheet,epoch,avg_bce_loss, avg_dice_loss, avg_loss,avg_acc):
     sheet.write(epoch,4,avg_acc)
     wb.save('R2AU_model_results.xls')
 ###    
-    
-def criterion(pred, labels, weights=[0.1, 0.9]):
-    _bce_loss = bce_crit(pred, labels)
-    _dice_loss = dice_crit(pred, labels)
-    global last_bce_loss, last_dice_loss
-    last_bce_loss = _bce_loss.item()
-    last_dice_loss = _dice_loss.item()
-    return weights[0] * _bce_loss + weights[1] * _dice_loss
-  
 
 size = args.volume_size * 3 if len(args.volume_size) == 1 else args.volume_size
 assert len(size) == 3
@@ -145,14 +149,15 @@ def train(train_loader, epoch):
         outputs = sigmoid(net(inputs))
         reporter.feed(outputs, labels)
         bce_crit.weight = get_weight_vector(labels, relative_weight, is_cuda)
-        loss = criterion(outputs, labels)
+        weighted_loss = criterion(outputs, labels)
         epoch_bce_loss += last_bce_loss
         epoch_dice_loss += last_dice_loss
-        epoch_loss += loss.item()
+        epoch_loss += weighted_loss.item()
+        BP_loss= focal_loss(outputs, labels)
         loss.backward()
         optimizer.step()
         scheduler.step()
-        del inputs, labels, outputs, loss
+        del inputs, labels, outputs, weighted_loss
     avg_bce_loss = epoch_bce_loss / float(len(train_loader))
     avg_dice_loss = epoch_dice_loss / float(len(train_loader))
     avg_loss = epoch_loss / float(len(train_loader))
