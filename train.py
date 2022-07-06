@@ -14,6 +14,9 @@ from loss import DiceLoss
 from model import UNet3D
 from utils import (get_weight_vector, Report,
                    transfer_weights)
+import xlwt
+from xlwt import Workbook
+import numpy
 
 argv = sys.argv[1:]
 parser = argparse.ArgumentParser(
@@ -66,7 +69,24 @@ dice_crit = DiceLoss()
 last_bce_loss = 0
 last_dice_loss = 0
 
+#to save the metrics to excel
+wb = Workbook()
+train_sheet = wb.add_sheet('model metrics_training')
+valid_sheet = wb.add_sheet('model metrics_validation')
+headings=['epoch', 'avg_bce_loss', 'avg_dice_loss', 'avg_loss']
 
+for i in range(len(headings)):
+    train_sheet.write(0,i,headings[i])
+    valid_sheet.write(0,i,headings[i])
+    
+def save_to_excel (sheet,epoch,avg_bce_loss, avg_dice_loss, avg_loss,avg_acc):
+    sheet.write(epoch,1,avg_bce_loss)
+    sheet.write(epoch,2,avg_dice_loss)
+    sheet.write(epoch,3,avg_loss)
+    sheet.write(epoch,4,avg_acc)
+    wb.save('R2AU_model_results.xls')
+###    
+    
 def criterion(pred, labels, weights=[0.1, 0.9]):
     _bce_loss = bce_crit(pred, labels)
     _dice_loss = dice_crit(pred, labels)
@@ -74,7 +94,7 @@ def criterion(pred, labels, weights=[0.1, 0.9]):
     last_bce_loss = _bce_loss.item()
     last_dice_loss = _dice_loss.item()
     return weights[0] * _bce_loss + weights[1] * _dice_loss
-
+  
 
 size = args.volume_size * 3 if len(args.volume_size) == 1 else args.volume_size
 assert len(size) == 3
@@ -116,6 +136,7 @@ def train(train_loader, epoch):
     epoch_bce_loss = 0
     epoch_dice_loss = 0
     epoch_loss = 0
+
     for inputs, labels in train_loader:
         optimizer.zero_grad()
         if is_cuda:
@@ -140,6 +161,7 @@ def train(train_loader, epoch):
         Avg Loss: {:.4f}".format(epoch, avg_bce_loss, avg_dice_loss, avg_loss))
     print(reporter)
     print(reporter.stats())
+    save_to_excel(train_sheet,epoch, avg_bce_loss, avg_dice_loss, avg_loss, avg_acc)
     return avg_loss, avg_acc
 
 
@@ -170,6 +192,7 @@ def validate(val_loader, epoch):
         Avg Loss: {:.4f}".format(epoch, avg_bce_loss, avg_dice_loss, avg_loss))
     print(reporter)
     print(reporter.stats())
+    save_to_excel(valid_sheet,epoch, avg_bce_loss, avg_dice_loss, avg_loss, avg_acc)
     return avg_loss, avg_acc
 
 
