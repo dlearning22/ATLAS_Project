@@ -103,7 +103,7 @@ class decoder2(nn.Module):
         x = self.up(x)
         return x
 #########################################################################################################
-def decoder(self,
+def decoder3(self,
                 in_channels,
                 out_channels,
                 kernel_size,
@@ -205,6 +205,31 @@ class UNet3D(nn.Module):
 
 ##########################################################################################
 
+def decoder(self,
+                in_channels,
+                out_channels,
+                kernel_size,
+                stride=1,
+                padding=0,
+                output_padding=0,
+                bias=True,
+                relu=True):
+        layer = [
+            nn.ConvTranspose3d(in_channels,
+                               out_channels,
+                               kernel_size,
+                               stride=stride,
+                               padding=padding,
+                               output_padding=output_padding,
+                               bias=bias),
+        ]
+        if relu:
+            layer.append(nn.BatchNorm3D(out_channels))
+            layer.append(nn.ReLU())
+        layer = nn.Sequential(*layer)
+        return layer
+
+########################################################################################
         # Initializing weights in encoder and decoder according to type of layer:
         for m in self.modules():
             if isinstance(m, nn.Conv3d) or isinstance(m, nn.ConvTranspose3d) : 
@@ -215,7 +240,7 @@ class UNet3D(nn.Module):
                 nn.init.constant_(m.weight, 1)
                 nn.init.constant_(m.bias, 0)
 
-###################################################################################
+########################################################################################
 
 
     def forward(self, x):
