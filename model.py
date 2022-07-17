@@ -167,7 +167,7 @@ class UNet3D(nn.Module):
 
         self.dc3_2 = RRCNN_block(planes[4],planes[4],t=t)
 
-        self.up3 = decoder(in_channels=planes[4],
+        self.up3 = self.decoder(in_channels=planes[4],
                                 out_channels=planes[3],kernel_size=2,
                                 stride=2)
 
@@ -175,7 +175,7 @@ class UNet3D(nn.Module):
 
         self.dc2_2 = RRCNN_block(planes[3],planes[3],t=t)
 
-        self.up2 = decoder(in_channels=planes[3],
+        self.up2 = self.decoder(in_channels=planes[3],
                                 out_channels=planes[2],kernel_size=2,
                                 stride=2)
 
@@ -183,7 +183,7 @@ class UNet3D(nn.Module):
 
         self.dc1_2 = RRCNN_block(planes[2],planes[2],t=t)
 
-        self.up1 = decoder(in_channels=planes[2],
+        self.up1 = self.decoder(in_channels=planes[2],
                                 out_channels=planes[1],kernel_size=2,
                                 stride=2)
 
