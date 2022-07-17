@@ -88,8 +88,8 @@ class Attention_block(nn.Module):
         psi = self.psi(psi)
 
         return x*psi
-
-class decoder(nn.Module):
+*************************************************************************************************************************
+class decoder2(nn.Module):
     def __init__(self,ch_in,ch_out):
         super(decoder,self).__init__()
         self.up = nn.Sequential(
@@ -102,9 +102,31 @@ class decoder(nn.Module):
     def forward(self,x):
         x = self.up(x)
         return x
-
-
-
+***************************************************************************************************************************
+def decoder(self,
+                in_channels,
+                out_channels,
+                kernel_size,
+                stride=1,
+                padding=0,
+                output_padding=0,
+                bias=True,
+                relu=True):
+        layer = [
+            nn.ConvTranspose3d(in_channels,
+                               out_channels,
+                               kernel_size,
+                               stride=stride,
+                               padding=padding,
+                               output_padding=output_padding,
+                               bias=bias),
+        ]
+        if relu:
+            layer.append(nn.BatchNorm3D(out_channels))
+            layer.append(nn.ReLU())
+        layer = nn.Sequential(*layer)
+        return layer
+**************************************************************************************************************************
 """# **R2AU-net** """
 
 class UNet3D(nn.Module):
@@ -146,21 +168,24 @@ class UNet3D(nn.Module):
         self.dc3_2 = RRCNN_block(planes[4],planes[4],t=t)
 
         self.up3 = decoder(planes[4],
-                                planes[3])
+                                planes[3],kernel_size=2,
+                                stride=2)
 
         self.dc2 = RRCNN_block(planes[4],planes[3],t=t)
 
         self.dc2_2 = RRCNN_block(planes[3],planes[3],t=t)
 
         self.up2 = decoder(planes[3],
-                                planes[2])
+                                planes[2],kernel_size=2,
+                                stride=2)
 
         self.dc1 = RRCNN_block(planes[3],planes[2],t=t)
 
         self.dc1_2 = RRCNN_block(planes[2],planes[2],t=t)
 
         self.up1 = decoder(planes[2],
-                                planes[1])
+                                planes[1],kernel_size=2,
+                                stride=2)
 
         self.dc0a = RRCNN_block(planes[2],planes[1],t=t)
 
