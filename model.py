@@ -205,7 +205,7 @@ class UNet3D(nn.Module):
 
 ##########################################################################################
 
-def decoder(self,
+    def decoder(self,
                 in_channels,
                 out_channels,
                 kernel_size,
