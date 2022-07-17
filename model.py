@@ -122,7 +122,7 @@ def decoder3(self,
                                bias=bias),
         ]
         if relu:
-            layer.append(nn.BatchNorm3D(out_channels))
+            layer.append(nn.BatchNorm3d(out_channels))
             layer.append(nn.ReLU())
         layer = nn.Sequential(*layer)
         return layer
@@ -224,7 +224,7 @@ class UNet3D(nn.Module):
                                bias=bias),
         ]
         if relu:
-            layer.append(nn.BatchNorm3D(out_channels))
+            layer.append(nn.BatchNorm3d(out_channels))
             layer.append(nn.ReLU())
         layer = nn.Sequential(*layer)
         return layer
