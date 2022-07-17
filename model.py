@@ -145,7 +145,7 @@ class UNet3D(nn.Module):
         planes = [inplanes * int(pow(2, i)) for i in range(0, 5)] # int()= integer, pow()=power, a list is created: [32,64,128,256,512,1024]         
         super(UNet3D,self).__init__()
         
-        self.Upsample = nn.Upsample(scale_factor=2)
+        #self.Upsample = nn.Upsample(scale_factor=2)
 
         self.ec0 = RRCNN_block(in_channel,planes[1],t=t)
 
@@ -167,24 +167,24 @@ class UNet3D(nn.Module):
 
         self.dc3_2 = RRCNN_block(planes[4],planes[4],t=t)
 
-        self.up3 = decoder(planes[4],
-                                planes[3],kernel_size=2,
+        self.up3 = decoder(in_channels=planes[4],
+                                out_channels=planes[3],kernel_size=2,
                                 stride=2)
 
         self.dc2 = RRCNN_block(planes[4],planes[3],t=t)
 
         self.dc2_2 = RRCNN_block(planes[3],planes[3],t=t)
 
-        self.up2 = decoder(planes[3],
-                                planes[2],kernel_size=2,
+        self.up2 = decoder(in_channels=planes[3],
+                                out_channels=planes[2],kernel_size=2,
                                 stride=2)
 
         self.dc1 = RRCNN_block(planes[3],planes[2],t=t)
 
         self.dc1_2 = RRCNN_block(planes[2],planes[2],t=t)
 
-        self.up1 = decoder(planes[2],
-                                planes[1],kernel_size=2,
+        self.up1 = decoder(in_channels=planes[2],
+                                out_channels=planes[1],kernel_size=2,
                                 stride=2)
 
         self.dc0a = RRCNN_block(planes[2],planes[1],t=t)
