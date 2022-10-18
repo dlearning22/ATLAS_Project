@@ -35,9 +35,9 @@ class FocalTverskyLoss(nn.Module):
         #inputs = F.sigmoid(inputs)       
         
         #flatten label and prediction tensors
-        ALPHA = 0.5
-        BETA = 0.5
-        GAMMA = 1
+        alpha = 0.5
+        beta = 0.5
+        gamma = 1
         inputs = inputs.view(-1)
         targets = targets.view(-1)
         
